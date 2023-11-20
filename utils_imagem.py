@@ -20,8 +20,8 @@ def tratar_imagem(caminho: str) -> np.ndarray :
     
     # Converte a imagem para um vetor
     vetor_imagem = np.array(imagem)
-    # Torna o vetor unidmentsinal e o normaliza
-    vetor_imagem = vetor_imagem.flatten() / 255.0
+    # Torna o vetor unidmentsinal
+    vetor_imagem = vetor_imagem.flatten()
     
     return vetor_imagem
 
