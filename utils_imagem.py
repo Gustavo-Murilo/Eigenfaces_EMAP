@@ -80,6 +80,41 @@ def plotar_grade(matriz: np.ndarray, descricao: str, qtd_linhas: int, qtd_coluna
     return None
 
 
+def plotar_grade_alternada(matrizes: np.ndarray, descricao: str, indices_visible: bool, qtd_linhas: int, qtd_colunas: int, tamanho: tuple, titulo: str) -> None :
+    # Definição de uma grade para a plotagem de imagens
+    fig, axes = plt.subplots(qtd_linhas, qtd_colunas, figsize=tamanho)
+
+    # Insere título na grade se for o caso
+    if titulo != '' :
+        fig.suptitle(titulo, fontsize=16)
+
+    # Adequa o programa à quantidade de matrizes
+    qtd_matrizes = 1
+    if isinstance(matrizes, tuple) :
+        qtd_matrizes = len(matrizes)
+        
+    for i, ax in enumerate(axes.flat):
+        indice = i // qtd_matrizes
+        
+        # Definição da imagem a ser plotada
+        escolhida = i % qtd_matrizes
+        matriz = matrizes[escolhida] 
+        
+        # Transforma o vetor unidimensional em uma matriz com as dimensões da imagem
+        matriz_imagem = matriz[:,indice].reshape(DIMENSAO_IMAGEM)
+    
+        # Ajustes para a plotagem
+        ax.imshow(matriz_imagem, cmap=plt.cm.gray)
+        ax.axis('off')
+
+        legenda = f'{descricao[escolhida]}'
+        if indices_visible : legenda += f' {indice}'
+        ax.set_title(legenda)
+
+    plt.show()
+   
+    return None
+
 # NÂO USADA AINDA
 # def reconstruir_imagem(Matriz: np.ndarray) -> np.ndarray :
 #     # Coeficientes de projeção para as eigenfaces da Matriz
