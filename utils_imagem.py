@@ -20,7 +20,7 @@ def tratar_imagem(caminho: str) -> np.ndarray :
     
     # Converte a imagem para um vetor
     vetor_imagem = np.array(imagem)
-    # Torna o vetor unidmentsinal
+    # Torna o vetor unidmentsinal e o normaliza
     vetor_imagem = vetor_imagem.flatten()
     
     return vetor_imagem
@@ -114,7 +114,7 @@ def plotar_grade_alternada(matrizes: np.ndarray, descricao: str, indices_visible
     plt.show()
    
     return None
-
+    
 # NÂO USADA AINDA
 # def reconstruir_imagem(Matriz: np.ndarray) -> np.ndarray :
 #     # Coeficientes de projeção para as eigenfaces da Matriz
