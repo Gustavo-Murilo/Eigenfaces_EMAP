@@ -5,6 +5,9 @@ import matplotlib.pyplot as plt
 
 # Constante com a dimensão da imagem
 DIMENSAO_IMAGEM = (100,100)
+FACE_MEDIA = np.zeros(DIMENSAO_IMAGEM)
+NOME_AMBIENTE = ""
+contador_imagem = 0
 
 def tratar_imagem(caminho: str) -> np.ndarray :
     # Carrega a imagem em uma variável
@@ -21,7 +24,7 @@ def tratar_imagem(caminho: str) -> np.ndarray :
     # Converte a imagem para um vetor
     vetor_imagem = np.array(imagem)
     # Torna o vetor unidmentsinal e o normaliza
-    vetor_imagem = vetor_imagem.flatten()
+    vetor_imagem = vetor_imagem.flatten() / 255.0
     
     return vetor_imagem
 
@@ -33,6 +36,12 @@ def plotar_imagem(vetor_imagem: np.ndarray,) -> None :
     # Configurações para a plotagem da imagem
     plot = plt.imshow(imagem, cmap='gray')
     plt.axis('off')
+
+    # Salva a imagem 
+    global contador_imagem
+    plt.savefig(f'{NOME_AMBIENTE}_{contador_imagem}.png')
+    contador_imagem += 1
+    
     plt.show()
 
     return None
@@ -75,6 +84,11 @@ def plotar_grade(matriz: np.ndarray, descricao: str, qtd_linhas: int, qtd_coluna
         else:
             ax.set_title(f'k = {descricao[indice]}')
 
+    # Salva a imagem 
+    global contador_imagem
+    plt.savefig(f'{NOME_AMBIENTE}_{contador_imagem}.png')
+    contador_imagem += 1
+    
     plt.show()
     
     return None
@@ -111,18 +125,74 @@ def plotar_grade_alternada(matrizes: np.ndarray, descricao: str, indices_visible
         if indices_visible : legenda += f' {indice}'
         ax.set_title(legenda)
 
+    # Salva a imagem 
+    global contador_imagem
+    plt.savefig(f'{NOME_AMBIENTE}_{contador_imagem}.png')
+    contador_imagem += 1
+    
     plt.show()
    
     return None
+
+def projetar_matriz(eigenfaces: np.ndarray, coeficientes: np.ndarray, dimensao: int, imagem_especifica: int) -> np.ndarray :
+    # Reconstrução da imagem usando as eigenfaces
+    matriz = np.dot(eigenfaces[:, :dimensao], coeficientes[:dimensao, :]) + FACE_MEDIA
+
+    if isinstance(imagem_especifica, int) :
+        matriz = matriz[:, imagem_especifica]
     
-# NÂO USADA AINDA
-# def reconstruir_imagem(Matriz: np.ndarray) -> np.ndarray :
-#     # Coeficientes de projeção para as eigenfaces da Matriz
-#     coeficientes_C = np.dot(U_C.T, M)
-#
-#     # Reconstrução da imagem usando as eigenfaces de U_A
-#     imagem_reconstruida_C = np.dot(U_C, coeficientes_C) + face_media
-#
-#     # Remodelar a imagem reconstruída para as dimensões originais
-#     imagem_reconstruida_C = imagem_reconstruida_C[:,1].reshape(DIMENSAO_IMAGEM)
-#     return np.array([1])
+    return matriz
+
+def listar_projecoes(eigenfaces: np.ndarray, coeficientes: np.ndarray, intervalo: list, imagem_especifica: int) -> np.ndarray :
+
+    lista = []
+    
+    for dimensao in intervalo :
+        # Reconstrução da imagem usando as eigenfaces
+        matriz_reconstruida = projetar_matriz(eigenfaces, coeficientes, dimensao, imagem_especifica)
+
+        # Salvar imagem em uma lista
+        lista.append(matriz_reconstruida)
+
+    # Converte a lista para uma matriz
+    lista_proj = np.array(lista).T
+    
+    return lista_proj
+
+def exibir_memoria_ocupada(lista_var: list) -> None :
+    
+    lista_nomes = ['A', 'M', 'C', 'U_A_k100', 'coef_A']
+
+    lista_magnitude = ['mb', 'gb']
+    
+    for i in range(len(lista_nomes)):
+        ocupacao = ''
+    
+        for j in range(2):
+            tamanho = f'{(lista_var[i].size * lista_var[i].itemsize) / (1024.0 ** (j+2)):_.1f}'.replace(".",",").replace("_",".")
+            ocupacao = ocupacao + f'{tamanho} {lista_magnitude[j]} = '
+
+        print(f'{lista_nomes[i]} ocupa {ocupacao[:-2]}')
+    
+    return None
+
+def plotar_relevancia_eigenfaces(autovalores: np.ndarray, titulo: str) -> None :
+    soma_total = autovalores.sum()
+
+    # Vetor com a relevância (percentual) de cada autovalores
+    relevancia = autovalores / soma_total
+   
+    # Plotar o percentual de valores em um gráfico de barras
+    plt.plot(relevancia, marker='o', linestyle='-')
+    plt.xlabel('Autovetor')
+    plt.ylabel('Percentual')
+    plt.title(f'Relevância das eigenfaces {titulo}')
+
+    # Salva a imagem 
+    global contador_imagem
+    plt.savefig(f'{NOME_AMBIENTE}_{contador_imagem}.png')
+    contador_imagem += 1
+
+    plt.show()
+    
+    return None
