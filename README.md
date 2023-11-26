@@ -22,7 +22,7 @@ O trabalho é composto por três principais componentes:
 
 
 
-2. **Código em Jupyter Notebook**: Implementamos os algoritmos relacionados à PCA e SVD em um Jupyter Notebook.
+2. **Código em Jupyter Notebook**: Implementamos os algoritmos relacionados à PCA e SVD em um Jupyter Notebook. O código fonte e os notebooks estão disponíveis na pasta `codigo`.
 
 3. **Relatório em LaTeX**: Preparamos um relatório detalhado em LaTeX que descreve nossa metodologia, resultados e conclusões. O relatório em formato PDF está na pasta `documentacao`.
 
